@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/components/conversationcard.tsx","./src/components/conversationdetail.tsx","./src/components/integrationsview.tsx","./src/components/settingsview.tsx","./src/components/sidebar.tsx","./src/data/democonversations.ts","./src/services/importwhatsappchat.ts"],"version":"5.9.3"}

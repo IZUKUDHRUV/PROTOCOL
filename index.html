@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Did I Miss?</title>
+    <style>
+        :root {
+            --bg-1: #071421;
+            --bg-2: #0f172a;
+            --panel: rgba(15, 23, 42, 0.82);
+            --panel-strong: rgba(15, 23, 42, 0.96);
+            --panel-border: rgba(148, 163, 184, 0.18);
+            --text: #e5edf9;
+            --muted: #a4b3cf;
+            --accent: #7dd3fc;
+            --accent-2: #a78bfa;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --shadow: rgba(2, 6, 23, 0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(125, 211, 252, 0.12), transparent 18%),
+                linear-gradient(135deg, var(--bg-1), var(--bg-2));
+            color: var(--text);
+        }
+
+        .container {
+            width: min(1220px, calc(100% - 32px));
+            margin: 32px auto 60px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(125, 211, 252, 0.12);
+            border: 1px solid rgba(125, 211, 252, 0.25);
+            color: var(--accent);
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        h1 {
+            margin: 14px 0 0;
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            line-height: 0.94;
+            letter-spacing: -0.06em;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            background: rgba(52, 211, 153, 0.1);
+            color: #bbf7d0;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .status-pill .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            position: relative;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            padding: 22px 20px 18px;
+            box-shadow: 0 16px 34px var(--shadow);
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        }
+
+        .card .label {
+            color: var(--muted);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .card .value {
+            margin-top: 14px;
+            font-size: clamp(1.8rem, 2vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+        }
+
+        .card .meta {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1.6fr 0.9fr;
+            gap: 22px;
+        }
+
+        .panel {
+            background: var(--panel-strong);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            padding: 22px 20px;
+            box-shadow: 0 18px 38px var(--shadow);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .feed {
+            display: grid;
+            gap: 16px;
+        }
+
+        .message {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            border-radius: 16px;
+            padding: 16px 18px;
+        }
+
+        .message-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .author {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .author strong {
+            font-size: 0.96rem;
+        }
+
+        .author small {
+            color: var(--muted);
+            font-size: 0.74rem;
+        }
+
+        .priority {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .priority.high {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            color: #fcd34d;
+        }
+
+        .priority.medium {
+            background: rgba(125, 211, 252, 0.1);
+            border: 1px solid rgba(125, 211, 252, 0.25);
+            color: #bae6fd;
+        }
+
+        .priority.low {
+            background: rgba(148, 163, 184, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            color: #cbd5e1;
+        }
+
+        .message-text {
+            margin: 0;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .summary {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(125, 211, 252, 0.08);
+            border: 1px solid rgba(125, 211, 252, 0.15);
+            color: #dff7ff;
+            font-size: 0.82rem;
+            line-height: 1.7;
+        }
+
+        .sidebar {
+            display: grid;
+            gap: 22px;
+        }
+
+        .task-list, .deadline-list, .source-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .task-item, .deadline-item, .source-item {
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .task-item strong, .deadline-item strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.96rem;
+        }
+
+        .task-item span, .deadline-item span, .source-item span {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 22px;
+            margin-top: 22px;
+        }
+
+        .ask-box {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-row input {
+            flex: 1;
+            height: 46px;
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            color: var(--text);
+            padding: 0 14px;
+            font-size: 0.94rem;
+        }
+
+        .input-row button {
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #051018;
+            padding: 0 18px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .source-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 6px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            background: rgba(52, 211, 153, 0.08);
+            color: #bbf7d0;
+        }
+
+        @media (max-width: 900px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .content,
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <header class="topbar">
+            <div>
+                <div class="eyebrow">Real-time summary</div>
+                <h1>What Did I Miss?</h1>
+            </div>
+            <div class="status-pill"><span class="dot"></span> Demo mode · sample messages</div>
+        </header>
+
+        <section class="stats">
+            <article class="card">
+                <div class="label">Critical alerts</div>
+                <div class="value">02</div>
+                <div class="meta">Urgent items requiring a response today.</div>
+            </article>
+
+            <article class="card">
+                <div class="label">Open tasks</div>
+                <div class="value">06</div>
+                <div class="meta">Actions assigned to you or your team.</div>
+            </article>
+
+            <article class="card">
+                <div class="label">Deadlines</div>
+                <div class="value">03</div>
+                <div class="meta">Upcoming decisions and time-sensitive items.</div>
+            </article>
+
+            <article class="card">
+                <div class="label">Active sources</div>
+                <div class="value">01</div>
+                <div class="meta">Only the sample feed is active; messaging integrations need setup.</div>
+            </article>
+        </section>
+
+        <section class="content">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">30-second catch-up</div>
+                </div>
+
+                <div class="feed">
+                    <article class="message">
+                        <div class="message-head">
+                            <div class="author">
+                                <strong>Team Lead</strong>
+                                <small>10:02 AM</small>
+                            </div>
+                            <span class="priority high">High</span>
+                        </div>
+                        <p class="message-text">Our final project review is scheduled for Friday at 5 PM.</p>
+                        <div class="summary">AI summary: Final project review is on Friday at 5 PM. This is an upcoming deadline and should be scheduled in your calendar.</div>
+                    </article>
+
+                    <article class="message">
+                        <div class="message-head">
+                            <div class="author">
+                                <strong>Teammate</strong>
+                                <small>10:04 AM</small>
+                            </div>
+                            <span class="priority high">High</span>
+                        </div>
+                        <p class="message-text">Dhruv, please finish the dashboard and push the code before Thursday evening.</p>
+                        <div class="summary">AI summary: Action required — finish the dashboard and push the code before Thursday evening. This is a likely delivery task for you.</div>
+                    </article>
+
+                    <article class="message">
+                        <div class="message-head">
+                            <div class="author">
+                                <strong>Team Lead</strong>
+                                <small>10:06 AM</small>
+                            </div>
+                            <span class="priority medium">Medium</span>
+                        </div>
+                        <p class="message-text">We decided to use React for the frontend and Gemini for AI analysis.</p>
+                        <div class="summary">AI summary: Decision recorded — the team chose React for the frontend and Gemini for AI analysis.</div>
+                    </article>
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">My tasks</div>
+                    </div>
+
+                    <div class="task-list">
+                        <div class="task-item">
+                            <strong>Finish dashboard</strong>
+                            <span>Assigned to Dhruv · due Thursday</span>
+                        </div>
+                        <div class="task-item">
+                            <strong>Push code</strong>
+                            <span>Before review setup</span>
+                        </div>
+                        <div class="task-item">
+                            <strong>Confirm final stack</strong>
+                            <span>React + Gemini approved</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">Deadlines</div>
+                    </div>
+
+                    <div class="deadline-list">
+                        <div class="deadline-item">
+                            <strong>Final project review</strong>
+                            <span>Friday at 5:00 PM</span>
+                        </div>
+                        <div class="deadline-item">
+                            <strong>Code submission</strong>
+                            <span>Before Thursday evening</span>
+                        </div>
+                        <div class="deadline-item">
+                            <strong>Design sign-off</strong>
+                            <span>Today, 4:30 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="bottom-grid">
+            <div class="panel ask-box">
+                <div class="panel-title">Ask AI</div>
+                <div class="input-row">
+                    <input type="text" value="What is the most urgent task right now?" aria-label="Ask AI" />
+                    <button>Ask</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">Source overview</div>
+                </div>
+
+                <div class="source-list">
+                    <div class="source-item">
+                        <span>WhatsApp Business · Meta webhook required</span>
+                        <span class="status">Needs setup</span>
+                    </div>
+                    <div class="source-item">
+                        <span>Android notifications · companion required</span>
+                        <span class="status">Not connected</span>
+                    </div>
+                    <div class="source-item">
+                        <span>Demo Feed · sample content</span>
+                        <span class="status">Active</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
